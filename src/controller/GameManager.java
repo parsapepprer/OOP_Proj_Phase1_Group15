@@ -1,26 +1,27 @@
 package controller;
 
+import model.Mission;
 import model.User;
 
 public class GameManager {
 
-    private User user;
-    private MissionManager missionManager;
+    private final User user;
+    private Mission mission;
 
     public GameManager(User user) {
         this.user = user;
-        this.missionManager = new MissionManager();
+        this.mission = null;
     }
 
     public boolean checkInvalidLevel(int level) {
-        return level <= 0 || level > missionManager.getNumberOfLevels();
+        return level <= 0 || level > MissionManager.numberOfLevels;
     }
 
     public boolean checkLockedLevel(int level) {
         return level > user.getLastUnlockedLevel();
     }
 
-    public User getUser() {
-        return user;
+    public void setMission(Mission mission) {
+        this.mission = mission;
     }
 }

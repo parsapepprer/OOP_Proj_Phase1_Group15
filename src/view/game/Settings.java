@@ -6,11 +6,11 @@ import view.AbstractMenu;
 
 public class Settings extends AbstractMenu {
 
-    private GameManager manager;
+    private final GameManager gameManager;
 
-    public Settings(GameManager manager) {
+    public Settings(GameManager gameManager) {
         super();
-        this.manager = manager;
+        this.gameManager = gameManager;
     }
 
     @Override

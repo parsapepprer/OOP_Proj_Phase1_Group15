@@ -2,16 +2,19 @@ package view.game;
 
 import controller.GameManager;
 import controller.Logger;
+import controller.MissionManager;
 import model.User;
 import view.AbstractMenu;
 
 public class Menu extends AbstractMenu {
 
-    private GameManager manager;
+    private final GameManager gameManager;
+    private final MissionManager missionManager;
 
     public Menu(User user) {
         super();
-        this.manager = new GameManager(user);
+        this.gameManager = new GameManager(user);
+        this.missionManager = new MissionManager();
     }
 
     @Override
@@ -33,12 +36,12 @@ public class Menu extends AbstractMenu {
                             int level = Integer.parseInt(scanner.nextLine());
                             Logger.log("info", "The user entered the level.");
 
-                            if (manager.checkInvalidLevel(level)) {
+                            if (gameManager.checkInvalidLevel(level)) {
                                 Logger.log("error", "The user entered a invalid level.");
                                 System.out.println("The level is invalid!");
                                 System.out.println();
 
-                            } else if (manager.checkLockedLevel(level)) {
+                            } else if (gameManager.checkLockedLevel(level)) {
                                 Logger.log("error", "The user entered a locked level.");
                                 System.out.println("The level is locked!");
                                 System.out.println();
@@ -46,7 +49,7 @@ public class Menu extends AbstractMenu {
                             } else {
                                 System.out.println();
                                 Logger.log("info", "The user started the game level " + level + ".");
-                                new Start(manager, level).run();
+                                new Start(gameManager, missionManager.getMission(level)).run();
                             }
                         } catch (Exception ignored) {
                             Logger.log("error", "The user entered a invalid level.");
@@ -58,7 +61,7 @@ public class Menu extends AbstractMenu {
                     } else if (nextMenuNum == 2) {
                         System.out.println();
                         Logger.log("info", "The user wanted to go to the settings.");
-                        new Settings(manager).run();
+                        new Settings(gameManager).run();
                         break;
 
                     } else if (nextMenuNum == 3) {

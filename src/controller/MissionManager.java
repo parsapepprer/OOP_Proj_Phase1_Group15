@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 public class MissionManager {
 
+    public static int numberOfLevels = 0;
     private HashMap<Integer, Mission> missions;
 
     public MissionManager() {
@@ -22,13 +23,14 @@ public class MissionManager {
             save();
         } else if (level == missions.size() + 1) {
             missions.put(level, mission);
-            Logger.log("admin", "New level " + level + " was added to levels!");
+            numberOfLevels++;
+            Logger.log("admin", "a new level (" + level + ") was added to levels!");
             save();
         }
     }
 
-    public int getNumberOfLevels() {
-        return missions.size();
+    public Mission getMission(int level) {
+        return missions.get(level);
     }
 
     private void load() {
@@ -40,6 +42,7 @@ public class MissionManager {
         } else {
             missions = new HashMap<>();
         }
+        numberOfLevels = missions.size();
     }
 
     private void save() {

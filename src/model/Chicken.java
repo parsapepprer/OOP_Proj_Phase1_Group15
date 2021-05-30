@@ -1,3 +1,5 @@
+package model;
+
 public class Chicken extends DomesticAnimal<Egg>{
 
    public Chicken(){

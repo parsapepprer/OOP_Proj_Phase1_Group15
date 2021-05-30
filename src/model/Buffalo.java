@@ -1,3 +1,5 @@
+package model;
+
 public class Buffalo extends DomesticAnimal<Milk>{
 
     public Buffalo(){

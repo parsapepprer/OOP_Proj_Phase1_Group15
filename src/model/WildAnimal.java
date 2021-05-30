@@ -1,9 +1,18 @@
+package model;
+
 import java.util.Random;
 
-public class Hound {
-    int price = 100;
-    int x , y;
-    Random rand = new Random();
+public abstract class WildAnimal { // lion  bear tiger
+    protected int x, y;
+    protected Random rand;
+    protected int cageTime;
+
+    public WildAnimal(int cageTime) {
+        this.rand = new Random();
+        this.x = rand.nextInt(6);
+        this.y = rand.nextInt(6);
+        this.cageTime = cageTime;
+    }
 
     public void moveRandom() {
         int vertical = rand.nextInt(2);
@@ -36,4 +45,5 @@ public class Hound {
         }
     }
 
+//    public void cage(){ }
 }

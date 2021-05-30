@@ -1,3 +1,5 @@
+package model;
+
 public class Turkey extends DomesticAnimal<Feather> {
 
     public Turkey() {

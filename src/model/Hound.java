@@ -1,22 +1,11 @@
+package model;
+
 import java.util.Random;
 
-public abstract class DomesticAnimal <T>{ // chicken    turkey   buffalo
-    protected int price;
-    protected String product;
-    protected int produceTime;
-    protected int lifetime;
-    protected int x, y;
-    protected Random rand ;
-
-    public DomesticAnimal(int price, String product, int produceTime) {
-        this.lifetime = 100;
-        this.price = price;
-        this.product = product;
-        this.produceTime = produceTime;
-        this.rand= new Random();
-        this.x = rand.nextInt(6);
-        this.y = rand.nextInt(6);
-    }
+public class Hound {
+    int price = 100;
+    int x , y;
+    Random rand = new Random();
 
     public void moveRandom() {
         int vertical = rand.nextInt(2);
@@ -47,12 +36,6 @@ public abstract class DomesticAnimal <T>{ // chicken    turkey   buffalo
             }
 
         }
-    }//
-
-    public void reduceLife(){
-        this.lifetime = this.lifetime * 9/10 ;
     }
-
-    public void eatGrass(){this.lifetime = 100 ;}
 
 }

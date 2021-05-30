@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract class Logger {
@@ -14,9 +15,8 @@ public abstract class Logger {
 
             FileWriter fileWriter = new FileWriter(file, true);
             Date date = new Date();
-
-            fileWriter.write(String.format("%02d/%02d/%04d - %02d:%02d:%02d, [%s], %s\n",
-                    date.getDate(), date.getMonth(), date.getYear(), date.getHours(), date.getMinutes(), date.getSeconds(), type, event));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+            fileWriter.write(String.format("%s, [%s], %s\n", formatter.format(date), type.toUpperCase(), event));
 
             fileWriter.close();
         } catch (IOException ignored) {

@@ -89,10 +89,10 @@ public class Authenticator {
     }
 
     private static void load() {
-        String userListText = FileManager.read("users.json");
-        if (!userListText.isEmpty()) {
+        String usersText = FileManager.read("users.json");
+        if (!usersText.isEmpty()) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            ArrayList<User> people = gson.fromJson(userListText, new TypeToken<ArrayList<User>>() {
+            ArrayList<User> people = gson.fromJson(usersText, new TypeToken<ArrayList<User>>() {
             }.getType());
             authenticatorInstance = new Authenticator(people);
         } else {
@@ -102,7 +102,7 @@ public class Authenticator {
 
     private void save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String userListText = gson.toJson(users);
-        FileManager.write("users.json", userListText);
+        String usersText = gson.toJson(users);
+        FileManager.write("users.json", usersText);
     }
 }

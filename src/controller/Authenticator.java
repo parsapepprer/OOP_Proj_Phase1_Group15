@@ -1,84 +1,85 @@
 package controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class Authenticator {
 
-    private HashMap<String, byte[]> userPassList;
+    private final ArrayList<User> users;
 
-    public Authenticator() {
-        userPassList = new HashMap<>();
-        load();
+    private Authenticator(ArrayList<User> users) {
+        this.users = users;
     }
 
-    public AuthenticationResult signup(String username, String password) {
-        if (checkUserExists(username)) return AuthenticationResult.SIGNUP_DUPLICATE_USERNAME;
-        if (!checkUsername(username)) return AuthenticationResult.SIGNUP_ERROR_USERNAME;
-        if (!checkPassword(password)) return AuthenticationResult.SIGNUP_ERROR_PASSWORD;
-        if (addUser(username, password)) return AuthenticationResult.SIGNUP_SUCCESS;
-        return AuthenticationResult.UNSPECIFIED_ERROR;
+    private static Authenticator authenticatorInstance;
+
+    public static Authenticator getInstance() {
+        if (authenticatorInstance == null) {
+            load();
+        }
+        return authenticatorInstance;
     }
 
-    public AuthenticationResult login(String username, String password) {
-        if (!checkUserExists(username)) return AuthenticationResult.LOGIN_NOT_EXISTED_USERNAME;
-        if (checkCorrectPassword(username, password)) return AuthenticationResult.LOGIN_SUCCESS;
-        return AuthenticationResult.LOGIN_INCORRECT_PASSWORD;
+    public User findUser(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) return user;
+        }
+        return null;
     }
 
-    public AuthenticationResult deleteAccount(String username, String password) {
-        if (!checkUserExists(username)) return AuthenticationResult.LOGIN_NOT_EXISTED_USERNAME;
-        if (!checkCorrectPassword(username, password)) return AuthenticationResult.LOGIN_INCORRECT_PASSWORD;
-        userPassList.remove(username);
-        save();
-        return AuthenticationResult.DELETE_ACCOUNT_SUCCESS;
-    }
-
-    private boolean addUser(String username, String password) {
-        MessageDigest md;
+    public void addUser(String username, String password) {
         try {
-            md = MessageDigest.getInstance("SHA-256");
-            userPassList.put(username, md.digest(password.getBytes(StandardCharsets.UTF_8)));
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            users.add(new User(username, md.digest(password.getBytes(StandardCharsets.UTF_8))));
             save();
-            return true;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+        }
+    }
+
+    public void removeUser(String username) {
+        users.remove(findUser(username));
+        save();
+    }
+
+    public boolean checkUserExists(String newUsername) {
+        for (User user : users) {
+            if (user.getUsername().equals(newUsername)) return true;
         }
         return false;
     }
 
-    private boolean checkUserExists(String newUsername) {
-        for (String username : userPassList.keySet()) {
-            if (newUsername.equals(username)) return true;
-        }
-        return false;
-    }
-
-    private boolean checkCorrectPassword(String newUsername, String newPassword) {
-        for (String username : userPassList.keySet()) {
-            if (newUsername.equals(username)) {
+    public boolean checkIncorrectPassword(String newUsername, String newPassword) {
+        for (User user : users) {
+            if (user.getUsername().equals(newUsername)) {
                 MessageDigest md;
                 try {
                     md = MessageDigest.getInstance("SHA-256");
-                    if (Arrays.equals(userPassList.get(newUsername), md.digest(newPassword.getBytes(StandardCharsets.UTF_8))))
-                        return true;
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
+                    if (Arrays.equals(user.getHashPassword(), md.digest(newPassword.getBytes(StandardCharsets.UTF_8))))
+                        return false;
+                } catch (Exception ignored) {
                 }
-                return false;
+                return true;
             }
         }
-        return false;
+        return true;
     }
 
-    private boolean checkPassword(String password) {
-        /*if (password.length() > 20 || password.length() < 8) return false;
+    public boolean checkUsername(String username) {/*
+        if (username.length() > 30 || username.length() < 6) return false;
+        else if (!username.matches("^[A-Za-z].*")) return false;
+        else return username.matches("[\\dA-Za-z_]+");*/
+        return true;
+    }
+
+    public boolean checkPassword(String password) {/*
+        if (password.length() > 20 || password.length() < 8) return false;
         else if (!password.matches(".*\\d.*")) return false;
         else if (!password.matches(".*[A-Z].*")) return false;
         else if (!password.matches(".*[a-z].*")) return false;
@@ -87,25 +88,21 @@ public class Authenticator {
         return true;
     }
 
-    private boolean checkUsername(String username) {
-        /*if (username.length() > 30 || username.length() < 6) return false;
-        else if (!username.matches("^[A-Za-z].*")) return false;
-        else return username.matches("[\\dA-Za-z_]+");*/
-        return true;
-    }
-
-    private void load() {
-        FileManager fileManager = new FileManager();
-        String userListText = fileManager.read("users.json");
-        if (!userListText.isEmpty())
-            userPassList = new Gson().fromJson(userListText, new TypeToken<HashMap<String, byte[]>>() {
+    private static void load() {
+        String userListText = FileManager.read("users.json");
+        if (!userListText.isEmpty()) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            ArrayList<User> people = gson.fromJson(userListText, new TypeToken<ArrayList<User>>() {
             }.getType());
+            authenticatorInstance = new Authenticator(people);
+        } else {
+            authenticatorInstance = new Authenticator(new ArrayList<>());
+        }
     }
 
     private void save() {
-        Gson gson = new Gson();
-        String userListText = gson.toJson(userPassList);
-        FileManager fileManager = new FileManager();
-        fileManager.write("users.json", userListText);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String userListText = gson.toJson(users);
+        FileManager.write("users.json", userListText);
     }
 }

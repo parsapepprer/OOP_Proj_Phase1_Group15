@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class FileManager {
+public abstract class FileManager {
 
     public static void write(String fileName, String string) {
         try {

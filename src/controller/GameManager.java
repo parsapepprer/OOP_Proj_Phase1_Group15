@@ -24,4 +24,12 @@ public class GameManager {
     public void setMission(Mission mission) {
         this.mission = mission;
     }
+
+    public void turn(int n){}
+
+    public void well(){
+        //3 time units
+        // bucket = 5
+    }
+
 }

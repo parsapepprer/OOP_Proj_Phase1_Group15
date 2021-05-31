@@ -2,8 +2,8 @@ import java.util.Random;
 
 public abstract class WildAnimal { // lion  bear tiger
     protected int x, y;
-    protected Random rand ;
-    protected int cageTime ;
+    protected Random rand;
+    protected int cageTime;
 
     public WildAnimal(int cageTime) {
         this.rand = new Random();

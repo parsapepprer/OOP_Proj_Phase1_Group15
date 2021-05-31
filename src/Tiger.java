@@ -1,5 +1,5 @@
 public class Tiger extends WildAnimal{
-    Tiger(){
+    public Tiger(){
         super(4);
     }
 }
